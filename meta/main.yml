@@ -1,5 +1,5 @@
 galaxy_info:
-  role_name: tg-torrent-bot
+  role_name: tg_torrent_bot_home
   author: Kirill Fertikov
   description: Telegram Torrent Bot for home server
   license: GPL-3.0-or-later
