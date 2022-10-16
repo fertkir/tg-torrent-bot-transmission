@@ -11,6 +11,6 @@
 
 - name: install transmission
   ansible.builtin.package:
-    name: {{ package_transmission }}
+    name: "{{ package_transmission }}"
     state: present
 
