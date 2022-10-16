@@ -1,4 +1,6 @@
 ---
+- include_vars: "{{ ansible_distribution }}.yml"
+
 - name: install npm
   ansible.builtin.package:
     name: npm
