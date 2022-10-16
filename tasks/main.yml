@@ -1,2 +1,5 @@
 ---
-# tasks file for tg-torrent-bot-ansible-role
+- name: install tg-torrent-bot npm package globally
+  community.general.npm:
+    name: tg-torrent-bot
+    global: true
