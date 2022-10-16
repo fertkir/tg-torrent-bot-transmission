@@ -1,4 +1,9 @@
 ---
+- name: install npm
+  ansible.builtin.package:
+    name: npm
+    state: present
+
 - name: install tg-torrent-bot npm package globally
   community.general.npm:
     name: tg-torrent-bot
