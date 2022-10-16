@@ -8,3 +8,9 @@
   community.general.npm:
     name: tg-torrent-bot
     global: true
+
+- name: install transmission
+  ansible.builtin.package:
+    name: {{ package_transmission }}
+    state: present
+
