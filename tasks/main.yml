@@ -13,6 +13,15 @@
 
 - name: install transmission
   ansible.builtin.package:
-    name: "{{ package_transmission }}"
+    name: "{{ packages.transmission }}"
     state: present
 
+- name: start transmission-daemon to generate config
+  ansible.builtin.systemd:
+    name: transmission-daemon
+    state: started
+
+- name: stop transmission-daemon to be able to edit config
+  ansible.builtin.systemd:
+    name: transmission-daemon
+    state: stopped

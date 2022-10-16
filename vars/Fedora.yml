@@ -1,2 +1,3 @@
 ---
-package_transmission: transmission-daemon
+packages:
+  transmission: transmission-daemon
