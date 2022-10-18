@@ -31,14 +31,49 @@
       register: slurped
 
     - name: save contents to a variable
-      set_fact:
+      ansible.builtin.set_fact:
         json_contents: "{{ slurped.content |  b64decode | from_json }}"
 
     - name: merge json with replacement values
-      set_fact:
-        json_contents: "{{ json_contents|combine({'script-torrent-done-enabled': true, 'script-torrent-done-filename': '/usr/bin/tg-torrent-bot', 'watch-dir': '/home/<youruser>/Torrents', 'watch-dir-enabled': true}, recursive=True) }}"
+      ansible.builtin.set_fact:
+        json_contents: "{{ json_contents | combine(json_update, recursive=True) }}"
+      vars:
+        json_update: "{'script-torrent-done-enabled': true, 'script-torrent-done-filename': '/usr/local/bin/tg-torrent-bot', 'watch-dir': '{{ tg-torrent-bot.torrents-dir }}', 'watch-dir-enabled': true}"
 
    - name: write updated json
-      copy:
+      ansible.builtin.copy:
         content: "{{ json_contents | to_nice_json(indent=2) }}"
         dest: /var/lib/transmission/.config/transmission-daemon/settings.json
+
+- name: add tg-torrent-bot user
+  ansible.builtin.user:
+    name: tg-torrent-bot
+    system: true
+
+- name: copy tg-torrent-bot script
+  ansible.builtin.copy:
+    src: tg-torrent-bot
+    dest: /usr/local/bin/
+    mode: 0755
+
+- name: copy tg-torrent-bot.service
+  ansible.builtin.copy:
+    src: tg-torrent-bot.service
+    dest: /lib/systemd/system/
+    mode: 0644
+
+- name: copy main.conf
+  ansible.builtin.template:
+    src: main.conf.j2
+    dest: /etc/tg-torrent-bot/main.conf
+    mode: 0644
+
+- name: start transmission-daemon
+  ansible.builtin.systemd:
+    name: transmission-daemon
+    state: started
+
+- name: start tg-torrent-bot
+  ansible.builtin.systemd:
+    name: tg-torrent-bot
+    state: started

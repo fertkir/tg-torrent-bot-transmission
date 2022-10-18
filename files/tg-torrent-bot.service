@@ -1,0 +1,16 @@
+[Unit]
+Description=Telegram Torrent Bot service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+ExecStart=/usr/local/bin/tg-torrent-bot
+User=tg-torrent-bot
+Group=tg-torrent-bot
+UMask=0002
+
+[Install]
+WantedBy=multi-user.target
