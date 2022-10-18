@@ -25,14 +25,10 @@
 
 - name: update transmission settings.json
   block:
-    - name: Slurp the json
+    - name: slurp the json
       ansible.builtin.slurp:
         src: /var/lib/transmission/.config/transmission-daemon/settings.json
       register: slurped
-
-    - name: before
-      debug:
-        var: json_contents
 
     - name: save contents to a variable
       set_fact:
@@ -42,11 +38,7 @@
       set_fact:
         json_contents: "{{ json_contents|combine({'script-torrent-done-enabled': true, 'script-torrent-done-filename': '/usr/bin/tg-torrent-bot', 'watch-dir': '/home/<youruser>/Torrents', 'watch-dir-enabled': true}, recursive=True) }}"
 
-    - name: after
-      debug:
-        var: json_contents
-
-    - name: write updated json
+   - name: write updated json
       copy:
         content: "{{ json_contents | to_nice_json(indent=2) }}"
         dest: /var/lib/transmission/.config/transmission-daemon/settings.json
