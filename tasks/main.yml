@@ -62,11 +62,18 @@
     dest: /lib/systemd/system/
     mode: 0644
 
-- name: copy main.conf
-  ansible.builtin.template:
-    src: main.conf.j2
-    dest: /etc/tg-torrent-bot/main.conf
-    mode: 0644
+- name: create tg-torrent-bot configuration
+  block:
+    - name: Make sure /etc/tg-torrent-bot/ exists
+      file:
+        path: /etc/tg-torrent-bot/
+        state: directory
+
+    - name: copy main.conf
+      ansible.builtin.template:
+        src: main.conf.j2
+        dest: /etc/tg-torrent-bot/main.conf
+        mode: 0644
 
 - name: start transmission-daemon
   ansible.builtin.systemd:
