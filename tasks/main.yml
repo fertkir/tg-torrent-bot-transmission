@@ -40,7 +40,7 @@
       vars:
         json_update: "{'script-torrent-done-enabled': true, 'script-torrent-done-filename': '/usr/local/bin/tg-torrent-bot', 'watch-dir': '{{ tg-torrent-bot.torrents-dir }}', 'watch-dir-enabled': true}"
 
-   - name: write updated json
+    - name: write updated json
       ansible.builtin.copy:
         content: "{{ json_contents | to_nice_json(indent=2) }}"
         dest: /var/lib/transmission/.config/transmission-daemon/settings.json
