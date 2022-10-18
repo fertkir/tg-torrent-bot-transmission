@@ -28,7 +28,7 @@
     - name: Slurp the json
       ansible.builtin.slurp:
         src: /var/lib/transmission/.config/transmission-daemon/settings.json
-        register: slurped
+      register: slurped
 
     - name: before
       debug:
