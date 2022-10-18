@@ -38,7 +38,7 @@
       ansible.builtin.set_fact:
         json_contents: "{{ json_contents | combine(json_update, recursive=True) }}"
       vars:
-        json_update: "{'script-torrent-done-enabled': true, 'script-torrent-done-filename': '/usr/local/bin/tg-torrent-bot', 'watch-dir': '{{ tg-torrent-bot.torrents-dir }}', 'watch-dir-enabled': true}"
+        json_update: "{'script-torrent-done-enabled': true, 'script-torrent-done-filename': '/usr/local/bin/tg-torrent-bot', 'watch-dir': '{{ tg_torrent_bot.torrents_dir }}', 'watch-dir-enabled': true}"
 
     - name: write updated json
       ansible.builtin.copy:
