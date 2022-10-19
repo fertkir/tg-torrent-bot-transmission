@@ -1,33 +1,42 @@
 ---
 - include_vars: "{{ ansible_distribution }}.yml"
 
+- name: print
+  ansible.builtin.debug:
+    msg: "User {{ansible_user_id}}"
+
 - name: installing required packages npm
+  become: yes
   ansible.builtin.package:
     name:
       - npm
-      - "{{ packages.transmission }}"
+      - "{{ transmission.package }}"
     state: present
 
 - name: install tg-torrent-bot npm package globally
+  become: yes
   community.general.npm:
     name: tg-torrent-bot
     global: true
 
 - name: start transmission-daemon to generate config
+  become: yes
   ansible.builtin.systemd:
     name: transmission-daemon
     state: started
 
 - name: stop transmission-daemon to be able to edit config
+  become: yes
   ansible.builtin.systemd:
     name: transmission-daemon
     state: stopped
 
 - name: update transmission settings.json
+  become: yes
   block:
     - name: slurp the json
       ansible.builtin.slurp:
-        src: /var/lib/transmission/.config/transmission-daemon/settings.json
+        src: "{{ transmission.settings_json }}"
       register: slurped
 
     - name: save contents to a variable
@@ -43,26 +52,39 @@
     - name: write updated json
       ansible.builtin.copy:
         content: "{{ json_contents | to_nice_json(indent=2) }}"
-        dest: /var/lib/transmission/.config/transmission-daemon/settings.json
+        dest: "{{ transmission.settings_json }}"
 
 - name: add tg-torrent-bot user
+  become: yes
   ansible.builtin.user:
     name: tg-torrent-bot
     system: true
 
+- name: add required groups
+  become: yes
+  ansible.builtin.group:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - downloaders
+    - torrent-handlers
+
 - name: copy tg-torrent-bot script
+  become: yes
   ansible.builtin.copy:
     src: tg-torrent-bot
     dest: /usr/local/bin/
     mode: 0755
 
 - name: copy tg-torrent-bot.service
+  become: yes
   ansible.builtin.copy:
     src: tg-torrent-bot.service
     dest: /lib/systemd/system/
     mode: 0644
 
 - name: create tg-torrent-bot configuration
+  become: yes
   block:
     - name: Make sure /etc/tg-torrent-bot/ exists
       ansible.builtin.file:
@@ -75,7 +97,16 @@
         dest: /etc/tg-torrent-bot/main.conf
         mode: 0644
 
+# - name: creating .torrent files directory
+#   become: yes
+#   ansible.builtin.file:
+#     path: "{{ tg_torrent_bot.torrents_dir }}"
+#     state: directory
+#     owner: tg-torrent-bot
+#     group: torrent-handlers
+
 - name: creating /var/lib/tg-torrent-bot/
+  become: yes
   ansible.builtin.file:
     path: /var/lib/tg-torrent-bot/
     state: directory
@@ -83,11 +114,13 @@
     group: tg-torrent-bot
 
 - name: start transmission-daemon
+  become: yes
   ansible.builtin.systemd:
     name: transmission-daemon
     state: started
 
 - name: start tg-torrent-bot
+  become: yes
   ansible.builtin.systemd:
     name: tg-torrent-bot
     state: started
