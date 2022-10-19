@@ -1,0 +1,34 @@
+---
+- name: generate transmission-daemon config
+  block:
+    - name: start transmission-daemon
+      ansible.builtin.systemd:
+        name: transmission-daemon
+        state: started
+
+    - name: stop transmission-daemon
+      ansible.builtin.systemd:
+        name: transmission-daemon
+        state: stopped
+
+- name: update transmission settings.json
+  block:
+    - name: slurp the json
+      ansible.builtin.slurp:
+        src: "{{ transmission.settings_json }}"
+      register: slurped
+
+    - name: save contents to a variable
+      ansible.builtin.set_fact:
+        json_contents: "{{ slurped.content |  b64decode | from_json }}"
+
+    - name: merge json with replacement values
+      ansible.builtin.set_fact:
+        json_contents: "{{ json_contents | combine(json_update, recursive=True) }}"
+      vars:
+        json_update: "{'script-torrent-done-enabled': true, 'script-torrent-done-filename': '/usr/local/bin/tg-torrent-bot', 'watch-dir': '{{ tg_torrent_bot.torrents_dir }}', 'watch-dir-enabled': true}"
+
+    - name: write updated json
+      ansible.builtin.copy:
+        content: "{{ json_contents | to_nice_json(indent=2) }}"
+        dest: "{{ transmission.settings_json }}"

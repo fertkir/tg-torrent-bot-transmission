@@ -1,0 +1,17 @@
+---
+- name: configuring users and groups
+  block:
+    - name: add required groups
+      ansible.builtin.group:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - downloaders
+        - torrent-handlers
+
+# - name: creating .torrent files directory
+#   ansible.builtin.file:
+#     path: "{{ tg_torrent_bot.torrents_dir }}"
+#     state: directory
+#     owner: tg-torrent-bot
+#     group: torrent-handlers

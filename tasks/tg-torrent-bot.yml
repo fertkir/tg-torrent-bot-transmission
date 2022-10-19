@@ -1,0 +1,42 @@
+---
+- name: install tg-torrent-bot npm package globally
+  community.general.npm:
+    name: tg-torrent-bot
+    global: true
+
+- name: create tg-torrent-bot user
+  ansible.builtin.user:
+    name: tg-torrent-bot
+    system: true
+
+- name: copy tg-torrent-bot script
+  ansible.builtin.copy:
+    src: tg-torrent-bot
+    dest: /usr/local/bin/
+    mode: 0755
+
+- name: copy tg-torrent-bot.service
+  ansible.builtin.copy:
+    src: tg-torrent-bot.service
+    dest: /lib/systemd/system/
+    mode: 0644
+
+- name: create tg-torrent-bot configuration
+  block:
+    - name: make sure /etc/tg-torrent-bot/ exists
+      ansible.builtin.file:
+        path: /etc/tg-torrent-bot/
+        state: directory
+
+    - name: copy main.conf
+      ansible.builtin.template:
+        src: main.conf.j2
+        dest: /etc/tg-torrent-bot/main.conf
+        mode: 0644
+
+- name: creating /var/lib/tg-torrent-bot/
+  ansible.builtin.file:
+    path: /var/lib/tg-torrent-bot/
+    state: directory
+    owner: tg-torrent-bot
+    group: tg-torrent-bot
