@@ -65,7 +65,7 @@
 - name: create tg-torrent-bot configuration
   block:
     - name: Make sure /etc/tg-torrent-bot/ exists
-      file:
+      ansible.builtin.file:
         path: /etc/tg-torrent-bot/
         state: directory
 
@@ -74,6 +74,13 @@
         src: main.conf.j2
         dest: /etc/tg-torrent-bot/main.conf
         mode: 0644
+
+- name: creating /var/lib/tg-torrent-bot/
+  ansible.builtin.file:
+    path: /var/lib/tg-torrent-bot/
+    state: directory
+    owner: tg-torrent-bot
+    group: tg-torrent-bot
 
 - name: start transmission-daemon
   ansible.builtin.systemd:
