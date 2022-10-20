@@ -1,8 +1,8 @@
 ---
-- include_vars: "{{ ansible_distribution }}.yml"
+- become: yes
+  block:
+    - include_vars: "{{ ansible_distribution }}.yml"
 
-- block:
-  become: yes
     - name: installing required packages
       ansible.builtin.package:
         name:
