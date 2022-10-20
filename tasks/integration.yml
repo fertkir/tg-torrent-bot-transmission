@@ -1,22 +1,20 @@
 ---
-- name: add regular user to transmission group to be able to access files created by transmission
+- name: add regular user and tg-torrent-bot to transmission group to be able to access files created by transmission
   ansible.builtin.user:
-    name: "{{ tg_torrent_bot.regular_user }}"
+    name: "{{ item }}"
     groups: "{{ transmission.group }}"
     append: yes
+  with_items:
+    - "{{ tg_torrent_bot.regular_user }}"
+    - tg-torrent-bot
 
-- name: creating .torrent files directory
+- name: creating downloads and .torrents directories
   ansible.builtin.file:
-    path: "{{ tg_torrent_bot.torrents_dir }}"
+    path: "{{ item }}"
     state: directory
     owner: "{{ transmission.user }}"
     group: "{{ transmission.group }}"
     mode: 0775
-
-- name: creating downloads directory
-  ansible.builtin.file:
-    path: "{{ tg_torrent_bot.downloads_dir }}"
-    state: directory
-    owner: "{{ transmission.user }}"
-    group: "{{ transmission.group }}"
-    mode: 0775
+  with_items:
+    - "{{ tg_torrent_bot.downloads_dir }}"
+    - "{{ tg_torrent_bot.torrents_dir }}"
