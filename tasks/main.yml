@@ -1,31 +1,23 @@
 ---
-- include_vars: "{{ ansible_distribution }}.yml"
-
-- name: installing required packages
+- block:
   become: yes
-  ansible.builtin.package:
-    name:
-      - npm
-      - "{{ transmission.package }}"
-    state: present
+    - include_vars: "{{ ansible_distribution }}.yml"
 
-- name: setting up transmission
-  become: yes
-  ansible.builtin.import_tasks: transmission.yml
+    - name: installing required packages
+      ansible.builtin.package:
+        name:
+          - npm
+          - "{{ transmission.package }}"
+        state: present
 
-- name: setting up tg-torrent-bot
-  become: yes
-  ansible.builtin.import_tasks: tg-torrent-bot.yml
+    - ansible.builtin.import_tasks: transmission.yml
+    - ansible.builtin.import_tasks: tg-torrent-bot.yml
+    - ansible.builtin.import_tasks: integration.yml
 
-- name: setting up integration between tg-torrent-bot and transmission
-  become: yes
-  ansible.builtin.import_tasks: integration.yml
-
-- name: starting services
-  become: yes
-  ansible.builtin.systemd:
-    name: "{{ item }}"
-    state: started
-  with_items:
-    - transmission-daemon
-    - tg-torrent-bot
+    - name: starting services
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: started
+      with_items:
+        - transmission-daemon
+        - tg-torrent-bot
