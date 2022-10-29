@@ -62,9 +62,7 @@
 
 - name: read downloads directory path
   ansible.builtin.set_fact:
-    transmission_downloads_dir: "{{ json_contents | regex_search(regex, '\\1') }}"
-  vars:
-    regex: '"download-dir":\\s+"(.+)"'
+    transmission_downloads_dir: '{{ json_contents | regex_search("\"download-dir\":\\s+\"(.+)\"", "\\1") }}'
 
 - name: generate torrents directory path
   ansible.builtin.set_fact:
