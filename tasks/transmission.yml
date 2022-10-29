@@ -3,9 +3,14 @@
   local_action: stat path="{{ transmission.settings_json }}"
   register: settings_json
 
+- name: get transmission username
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ settings_json.stat.uid }}"
+
 - name: debug
   ansible.builtin.debug:
-    msg: "{{ getent_passwd[settings_json.stat.uid].0 }}"
+    msg: "{{ ansible_facts.getent_passwd }}"
 
 - name: backup existing settings.json if any
   become_user: "{{ getent_passwd[settings_json.stat.uid].0 }}"
