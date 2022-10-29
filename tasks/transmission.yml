@@ -3,12 +3,15 @@
   local_action: stat path="{{ transmission.settings_json }}"
   register: settings_json
 
+- name: debug
+  ansible.builtin.debug:
+    msg: "{{ getent_passwd[settings_json.stat.uid].0 }}"
+
 - name: backup existing settings.json if any
+  become_user: "{{ getent_passwd[settings_json.stat.uid].0 }}"
   ansible.builtin.copy:
     src: "{{ transmission.settings_json }}"
     dest: "{{ transmission.settings_json }}.backup"
-    owner: "{{ settings_json.stat.uid }}"
-    group: "{{ settings_json.stat.gid }}"
     backup: yes
   when: settings_json.stat.exists
 
