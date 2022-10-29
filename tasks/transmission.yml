@@ -35,8 +35,9 @@
       set_fact:
         transmission_user: "{{ ansible_facts.getent_passwd.keys() | list | first }}"
 
-    - debug:
-        msg: "transmission user: \"{{ transmission_user }}\""
+    - name: transmission user
+      debug:
+        var: transmission_user
 
     - name: get transmission group
       ansible.builtin.getent:
@@ -47,8 +48,9 @@
       set_fact:
         transmission_group: "{{ ansible_facts.getent_group.keys() | list | first }}"
 
-    - debug:
-        msg: "transmission group: \"{{ transmission_group }}\""
+    - name: transmission group
+      debug:
+        var: transmission_group
 
 - name: read settings.json contents
   ansible.builtin.slurp:
