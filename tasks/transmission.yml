@@ -1,4 +1,8 @@
 ---
+- name: install jmespath
+  ansible.builtin.pip:
+    name: jmespath
+
 - name: check if settings.json exists
   local_action: stat path="{{ transmission.settings_json }}"
   register: settings_json
