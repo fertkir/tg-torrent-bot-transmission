@@ -3,6 +3,10 @@
   local_action: stat path="{{ transmission.settings_json }}"
   register: settings_json
 
+- name: debug
+  ansible.builtin.debug:
+    msg: "{{ settings_json }}"
+
 - name: backup existing settings.json if any
   ansible.builtin.copy:
     src: "{{ transmission.settings_json }}"
