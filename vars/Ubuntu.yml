@@ -1,6 +1,4 @@
 ---
 transmission:
-  package: transmission-daemon
   user: debian-transmission
   group: debian-transmission
-  settings_json: /var/lib/transmission/.config/transmission-daemon/settings.json

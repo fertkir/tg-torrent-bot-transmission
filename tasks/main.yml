@@ -12,7 +12,6 @@
 
     - ansible.builtin.import_tasks: transmission.yml
     - ansible.builtin.import_tasks: tg-torrent-bot.yml
-    - ansible.builtin.import_tasks: integration.yml
 
     - name: starting services
       ansible.builtin.systemd:

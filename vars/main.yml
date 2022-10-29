@@ -1,2 +1,6 @@
 ---
-# vars file for tg-torrent-bot-ansible-role
+transmission:
+  package: transmission-daemon
+  user: transmission
+  group: transmission
+  settings_json: /var/lib/transmission/.config/transmission-daemon/settings.json

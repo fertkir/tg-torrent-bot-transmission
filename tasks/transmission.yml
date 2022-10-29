@@ -1,5 +1,20 @@
 ---
-- name: generate transmission-daemon config
+- name: check if settings.json exists
+  local_action: stat path="{{ transmission.settings_json }}"
+  register: settings_json
+
+- name: backup existing settings.json if any
+  ansible.builtin.copy:
+    src: "{{ transmission.settings_json }}"
+    dest: "{{ transmission.settings_json }}.{{ansible_date_time.date}}.bak"
+  when: settings_json.stat.exists
+
+- name: remove existing settings.json if any
+  ansible.builtin.file:
+    path: "{{ transmission.settings_json }}"
+    state: absent
+
+- name: generate a new settings.json
   block:
     - name: start transmission-daemon
       ansible.builtin.systemd:
@@ -11,24 +26,74 @@
         name: transmission-daemon
         state: stopped
 
-- name: update transmission settings.json
-  block:
-    - name: slurp the json
-      ansible.builtin.slurp:
-        src: "{{ transmission.settings_json }}"
-      register: slurped
+- name: slurp the json
+  ansible.builtin.slurp:
+    src: "{{ transmission.settings_json }}"
+  register: slurped
 
-    - name: save contents to a variable
-      ansible.builtin.set_fact:
-        json_contents: "{{ slurped.content |  b64decode | from_json }}"
+- name: save settings.json contents to a variable
+  ansible.builtin.set_fact:
+    json_contents: "{{ slurped.content |  b64decode | from_json }}"
 
-    - name: merge json with replacement values
-      ansible.builtin.set_fact:
-        json_contents: "{{ json_contents | combine(json_update, recursive=True) }}"
-      vars:
-        json_update: "{'download-dir': '{{ tg_torrent_bot.downloads_dir }}', 'script-torrent-done-enabled': true, 'script-torrent-done-filename': '/usr/local/bin/tg-torrent-bot', 'umask': '2', 'watch-dir': '{{ tg_torrent_bot.torrents_dir }}', 'watch-dir-enabled': true}"
+- name: read downloads directory path
+  set_fact:
+    transmission_downloads_dir: "{{ json_contents | json_query(jmesquery) }}"
+  vars:
+    jmesquery: 'download-dir'
 
-    - name: write updated json
-      ansible.builtin.copy:
-        content: "{{ json_contents | to_nice_json(indent=2) }}"
-        dest: "{{ transmission.settings_json }}"
+- name: generate torrents directory path
+  set_fact:
+    transmission_torrents_dir: "{{ transmission_downloads_dir | regex_replace('([^\/]+$)', 'Torrents') }}"
+
+- name: merge json with replacement values
+  ansible.builtin.set_fact:
+    json_contents: "{{ json_contents | combine(json_update, recursive=True) }}"
+  vars:
+    json_update: "{'script-torrent-done-enabled': true, 'script-torrent-done-filename': '/usr/local/bin/tg-torrent-bot', 'umask': '2', 'watch-dir': '{{ transmission_torrents_dir }}', 'watch-dir-enabled': true}"
+
+- name: write updated settings.json
+  ansible.builtin.copy:
+    content: "{{ json_contents | to_nice_json(indent=2) }}"
+    dest: "{{ transmission.settings_json }}"
+
+- name: get transmission base directory path
+  set_fact:
+    transmission_base_dir: "{{ transmission_downloads_dir | regex_replace('([^\/]+$)', '') }}"
+
+- name: get transmission base directory stats
+  local_action: stat path="{{ transmission_base_dir }}"
+  register: transmission_base_dir_stats
+
+- name: create downloads and torrents directories if missing
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ transmission_base_dir_stats.stat.uid }}"
+    group: "{{ transmission_base_dir_stats.stat.gid }}"
+    state: directory
+    mode: 0775
+  with_items:
+    - "{{ transmission_downloads_dir }}"
+    - "{{ transmission_torrents_dir }}"
+
+- name: add regular user and tg-torrent-bot to transmission group to be able to access files created by transmission
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: "{{ transmission.group }}"
+    append: yes
+  with_items:
+    - "{{ tg_torrent_bot.regular_user }}"
+    - tg-torrent-bot
+
+- name: create symbolic links to downloads and torrents directories
+  ansible.builtin.file:
+    src: "{{ item }}"
+    dest: "{{ item | regex_replace('^(.*[\/])', homedir) }}"
+    owner: "{{ tg_torrent_bot.regular_user }}"
+    group: "{{ tg_torrent_bot.regular_user }}"
+    state: link
+  vars:
+    homedir: "/home/{{ tg_torrent_bot.regular_user }}/"
+  with_items:
+    - "{{ transmission_downloads_dir }}"
+    - "{{ transmission_torrents_dir }}"
+
