@@ -7,6 +7,8 @@
   ansible.builtin.copy:
     src: "{{ transmission.settings_json }}"
     dest: "{{ transmission.settings_json }}.backup"
+    owner: "{{ settings_json.stat.uid }}"
+    group: "{{ settings_json.stat.git }}"
     backup: yes
   when: settings_json.stat.exists
 
