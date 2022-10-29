@@ -8,7 +8,12 @@
         name:
           - npm
           - "{{ transmission.package }}"
+          - python-pip
         state: present
+
+    - name: install jmespath
+      ansible.builtin.pip:
+        name: jmespath
 
     - ansible.builtin.import_tasks: transmission.yml
     - ansible.builtin.import_tasks: tg-torrent-bot.yml
