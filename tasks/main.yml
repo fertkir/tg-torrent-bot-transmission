@@ -2,6 +2,13 @@
 - become: yes
   block:
     - include_vars: "{{ ansible_distribution }}.yml"
+    
+    - debug:
+        msg: "{{ lookup('env', 'USER') }}"
+    - debug:
+        msg: "{{ lookup('env', 'SUDO_USER') }}"
+    - debug:
+        msg: "{{ ansible_user_id }}"
 
     - name: installing required packages
       ansible.builtin.package:
