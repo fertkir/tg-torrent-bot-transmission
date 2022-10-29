@@ -52,7 +52,7 @@
   set_fact:
     transmission_downloads_dir: "{{ json_contents | json_query(jmesquery) }}"
   vars:
-    jmesquery: 'download-dir'
+    jmesquery: '\"download-dir\"'
 
 - name: generate torrents directory path
   set_fact:
