@@ -23,33 +23,31 @@
   local_action: stat path="{{ transmission.settings_json }}"
   register: settings_json
 
-- name: get transmission usename and group
-  block:
-    - name: get transmission user
-      ansible.builtin.getent:
-        database: passwd
-        key: "{{ settings_json.stat.uid }}"
+- name: get transmission user
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ settings_json.stat.uid }}"
 
-    - name: save transmission user to variable
-      set_fact:
-        transmission_user: "{{ ansible_facts.getent_passwd.keys() | list | first }}"
+- name: save transmission user to variable
+  ansible.builtin.set_fact:
+    transmission_user: "{{ ansible_facts.getent_passwd.keys() | list | first }}"
 
-    - name: transmission user
-      debug:
-        var: transmission_user
+- name: transmission user
+  debug:
+    var: transmission_user
 
-    - name: get transmission group
-      ansible.builtin.getent:
-        database: group
-        key: "{{ settings_json.stat.gid }}"
+- name: get transmission group
+  ansible.builtin.getent:
+    database: group
+    key: "{{ settings_json.stat.gid }}"
 
-    - name: save transmission group to variable
-      set_fact:
-        transmission_group: "{{ ansible_facts.getent_group.keys() | list | first }}"
+- name: save transmission group to variable
+  ansible.builtin.set_fact:
+    transmission_group: "{{ ansible_facts.getent_group.keys() | list | first }}"
 
-    - name: transmission group
-      debug:
-        var: transmission_group
+- name: transmission group
+  debug:
+    var: transmission_group
 
 - name: read settings.json contents
   ansible.builtin.slurp:
@@ -61,13 +59,13 @@
     json_contents: "{{ slurped.content |  b64decode | from_json }}"
 
 - name: read downloads directory path
-  set_fact:
+  ansible.builtin.set_fact:
     transmission_downloads_dir: "{{ json_contents | json_query(jmesquery) }}"
   vars:
     jmesquery: '"download-dir"'
 
 - name: generate torrents directory path
-  set_fact:
+  ansible.builtin.set_fact:
     transmission_torrents_dir: "{{ transmission_downloads_dir | regex_replace('([^\/]+$)', 'Torrents') }}"
 
 - name: merge json with replacement values
@@ -87,7 +85,7 @@
     owner: "{{ transmission_user }}"
     group: "{{ transmission_group }}"
     state: directory
-    mode: '0775'
+    mode: 0775
   with_items:
     - "{{ transmission_downloads_dir }}"
     - "{{ transmission_torrents_dir }}"
