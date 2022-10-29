@@ -123,11 +123,10 @@
     state: directory
 
 - name: create symbolic links to downloads and torrents directories
+  become_user: "{{ tg_torrent_bot.regular_user }}"
   ansible.builtin.file:
     src: "{{ item }}"
     dest: "{{ item | regex_replace('^(.*[\/])', symlinks_folder) }}"
-    owner: "{{ tg_torrent_bot.regular_user }}"
-    group: "{{ tg_torrent_bot.regular_user }}"
     state: link
   with_items:
     - "{{ transmission_downloads_dir }}"
