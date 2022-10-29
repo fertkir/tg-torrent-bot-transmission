@@ -91,23 +91,27 @@
     - "{{ transmission_downloads_dir }}"
     - "{{ transmission_torrents_dir }}"
 
+- name: get username
+  ansible.builtin.set_fact:
+    current_user: "{{ lookup('env', 'USER') }}"
+
 - name: add regular user and tg-torrent-bot to transmission group to be able to access files created by transmission
   ansible.builtin.user:
     name: "{{ item }}"
     groups: "{{ transmission_group }}"
     append: yes
   with_items:
-    - "{{ tg_torrent_bot.regular_user }}"
+    - "{{ current_user }}"
     - tg-torrent-bot
 
 - name: get current user info
   ansible.builtin.getent:
     database: passwd
-    key: "{{ tg_torrent_bot.regular_user }}"
+    key: "{{ current_user }}"
 
 - name: save current user home to variable
   ansible.builtin.set_fact:
-    current_user_home: "{{ ansible_facts.getent_passwd[tg_torrent_bot.regular_user][4] }}"
+    current_user_home: "{{ ansible_facts.getent_passwd[current_user][4] }}"
 
 - name: save symlinks folder name to variable
   ansible.builtin.set_fact:
@@ -116,12 +120,12 @@
 - name: create symlinks folder if missing
   ansible.builtin.file:
     path: "{{ symlinks_folder }}"
-    owner: "{{ tg_torrent_bot.regular_user }}"
-    group: "{{ tg_torrent_bot.regular_user }}"
+    owner: "{{ current_user }}"
+    group: "{{ current_user }}"
     state: directory
 
 - name: create symbolic links to downloads and torrents directories
-  become_user: "{{ tg_torrent_bot.regular_user }}"
+  become_user: "{{ current_user }}"
   ansible.builtin.file:
     src: "{{ item }}"
     dest: "{{ item | regex_replace('^(.*[\/])', symlinks_folder) }}"
