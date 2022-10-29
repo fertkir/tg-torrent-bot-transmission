@@ -2,14 +2,22 @@
 - name: get settings.json stats
   local_action: stat path="{{ transmission.settings_json }}"
   register: settings_json
-  
-- name: Ansible fact - ansible_date_time
-  debug:
-    var: ansible_date_time
-  
-#- name: Move the src file to dest
-#  command: mv {{ transmission.settings_json }} {{ transmission.settings_json }}.
-#  when: settings_json.stat.exists
+
+- name: backup existing settings.json if any
+  command: mv {{ transmission.settings_json }} {{ transmission.settings_json }}.bak.{{ ansible_date_time.iso8601_basic_short }}
+  when: settings_json.stat.exists
+
+- name: generate a new settings.json
+  block:
+    - name: start transmission-daemon
+      ansible.builtin.systemd:
+        name: transmission-daemon
+        state: started
+
+    - name: stop transmission-daemon
+      ansible.builtin.systemd:
+        name: transmission-daemon
+        state: stopped
   
 - name: get transmission usename and group
   block:
@@ -30,30 +38,6 @@
     - name: save transmission group to variable
       set_fact:
         transmission_group: "{{ ansible_facts.getent_group.keys()|list|first }}"
-
-- name: backup existing settings.json if any
-  become_user: "{{ transmission_user }}"
-  ansible.builtin.copy:
-    src: "{{ transmission.settings_json }}"
-    dest: "{{ transmission.settings_json }}.backup"
-    backup: yes
-
-- name: remove existing settings.json if any
-  ansible.builtin.file:
-    path: "{{ transmission.settings_json }}"
-    state: absent
-
-- name: generate a new settings.json
-  block:
-    - name: start transmission-daemon
-      ansible.builtin.systemd:
-        name: transmission-daemon
-        state: started
-
-    - name: stop transmission-daemon
-      ansible.builtin.systemd:
-        name: transmission-daemon
-        state: stopped
 
 - name: slurp the json
   ansible.builtin.slurp:
