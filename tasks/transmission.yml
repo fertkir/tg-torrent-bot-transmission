@@ -96,6 +96,19 @@
   with_items:
     - "{{ tg_torrent_bot.regular_user }}"
     - tg-torrent-bot
+    
+- name: get current user info
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ tg_torrent_bot.regular_user }}"
+
+- name: save current user home to variable
+  set_fact:
+    current_user_home: "{{ ansible_facts.getent_passwd }}"
+    
+- name: debug
+  debug:
+    var: "{{ ansible_facts.getent_passwd }}"
 
 - name: create symbolic links to downloads and torrents directories
   ansible.builtin.file:
@@ -105,7 +118,7 @@
     group: "{{ tg_torrent_bot.regular_user }}"
     state: link
   vars:
-    homedir: "/home/{{ tg_torrent_bot.regular_user }}/"
+    homedir: "/home/{{ tg_torrent_bot.regular_user }}/transmission/"
   with_items:
     - "{{ transmission_downloads_dir }}"
     - "{{ transmission_torrents_dir }}"
