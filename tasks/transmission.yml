@@ -19,6 +19,11 @@
         name: transmission-daemon
         state: stopped
 
+- name: get settings.json stats again, if settings.json did not exist
+  local_action: stat path="{{ transmission.settings_json }}"
+  register: settings_json
+  when: not settings_json.stat.exists
+
 - name: get transmission usename and group
   block:
     - name: get transmission user
