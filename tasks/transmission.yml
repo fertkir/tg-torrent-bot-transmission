@@ -105,19 +105,14 @@
 - name: save current user home to variable
   set_fact:
     current_user_home: "{{ ansible_facts.getent_passwd[tg_torrent_bot.regular_user][4] }}"
-    
-- debug:
-    var: current_user_home
 
 - name: create symbolic links to downloads and torrents directories
   ansible.builtin.file:
     src: "{{ item }}"
-    dest: "{{ item | regex_replace('^(.*[\/])', homedir) }}"
+    dest: "{{ item | regex_replace('^(.*[\/])', current_user_home + '/transmission/') }}"
     owner: "{{ tg_torrent_bot.regular_user }}"
     group: "{{ tg_torrent_bot.regular_user }}"
     state: link
-  vars:
-    homedir: "/home/{{ tg_torrent_bot.regular_user }}/transmission/"
   with_items:
     - "{{ transmission_downloads_dir }}"
     - "{{ transmission_torrents_dir }}"
