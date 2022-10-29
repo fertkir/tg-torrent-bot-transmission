@@ -5,7 +5,7 @@
 
 - name: debug
   ansible.builtin.debug:
-    msg: "{{ settings_json }}"
+    msg: "{{ transmission.settings_json }}.{{ansible_date_time.date}}.bak"
 
 - name: backup existing settings.json if any
   ansible.builtin.copy:
