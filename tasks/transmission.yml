@@ -102,9 +102,8 @@
     database: passwd
     key: "{{ tg_torrent_bot.regular_user }}"
     
-- name: debug
-  debug:
-    var: "{{ ansible_facts.getent_passwd }}"
+- debug:
+    var: ansible_facts.getent_passwd
 
 - name: save current user home to variable
   set_fact:
