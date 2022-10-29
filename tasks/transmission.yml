@@ -18,7 +18,7 @@
       ansible.builtin.systemd:
         name: transmission-daemon
         state: stopped
-  
+
 - name: get transmission usename and group
   block:
     - name: get transmission user
@@ -28,8 +28,11 @@
 
     - name: save transmission user to variable
       set_fact:
-        transmission_user: "{{ ansible_facts.getent_passwd.keys()|list|first }}"
-        
+        transmission_user: "{{ ansible_facts.getent_passwd.keys() | list | first }}"
+
+    - debug:
+        msg: "transmission user: \"{{ transmission_user }}\""
+
     - name: get transmission group
       ansible.builtin.getent:
         database: group
@@ -37,9 +40,12 @@
 
     - name: save transmission group to variable
       set_fact:
-        transmission_group: "{{ ansible_facts.getent_group.keys()|list|first }}"
+        transmission_group: "{{ ansible_facts.getent_group.keys() | list | first }}"
 
-- name: slurp the json
+    - debug:
+        msg: "transmission group: \"{{ transmission_group }}\""
+
+- name: read settings.json contents
   ansible.builtin.slurp:
     src: "{{ transmission.settings_json }}"
   register: slurped
@@ -69,14 +75,6 @@
     content: "{{ json_contents | to_nice_json(indent=2) }}"
     dest: "{{ transmission.settings_json }}"
 
-- name: get transmission base directory path
-  set_fact:
-    transmission_base_dir: "{{ transmission_downloads_dir | regex_replace('([^\/]+$)', '') }}"
-
-- name: get transmission base directory stats
-  local_action: stat path="{{ transmission_base_dir }}"
-  register: transmission_base_dir_stats
-
 - name: create downloads and torrents directories if missing
   ansible.builtin.file:
     path: "{{ item }}"
@@ -96,7 +94,7 @@
   with_items:
     - "{{ tg_torrent_bot.regular_user }}"
     - tg-torrent-bot
-    
+
 - name: get current user info
   ansible.builtin.getent:
     database: passwd
@@ -105,7 +103,7 @@
 - name: save current user home to variable
   set_fact:
     current_user_home: "{{ ansible_facts.getent_passwd[tg_torrent_bot.regular_user][4] }}"
-    
+
 - name: save symlinks folder name to variable
   set_fact:
     symlinks_folder: "{{ current_user_home }}/transmission/"
