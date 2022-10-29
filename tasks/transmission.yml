@@ -101,16 +101,13 @@
   ansible.builtin.getent:
     database: passwd
     key: "{{ tg_torrent_bot.regular_user }}"
-    
-- debug:
-    var: ansible_facts.getent_passwd.values()|list|first[4]
-
-- debug:
-    var: ansible_facts.getent_passwd["{{ tg_torrent_bot.regular_user }}"][4]
 
 - name: save current user home to variable
   set_fact:
-    current_user_home: "{{ ansible_facts.getent_passwd }}"
+    current_user_home: "{{ ansible_facts.getent_passwd[tg_torrent_bot.regular_user][4] }}"
+    
+- debug:
+    var: "{{ current_user_home }}"
 
 - name: create symbolic links to downloads and torrents directories
   ansible.builtin.file:
