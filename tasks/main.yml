@@ -1,8 +1,6 @@
 ---
 - become: yes
   block:
-    - include_vars: "{{ ansible_distribution }}.yml"
-    
     - debug:
         msg: "{{ lookup('env', 'USER') }}"
     - debug:
