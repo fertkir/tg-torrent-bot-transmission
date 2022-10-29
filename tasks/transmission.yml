@@ -3,14 +3,11 @@
   local_action: stat path="{{ transmission.settings_json }}"
   register: settings_json
 
-- name: debug
-  ansible.builtin.debug:
-    msg: "{{ transmission.settings_json }}.{{ansible_date_time.date}}.bak"
-
 - name: backup existing settings.json if any
   ansible.builtin.copy:
     src: "{{ transmission.settings_json }}"
-    dest: "{{ transmission.settings_json }}.{{ansible_date_time.date}}.bak"
+    dest: "{{ transmission.settings_json }}.backup"
+    backup: yes
   when: settings_json.stat.exists
 
 - name: remove existing settings.json if any
