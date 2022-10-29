@@ -107,7 +107,7 @@
     current_user_home: "{{ ansible_facts.getent_passwd[tg_torrent_bot.regular_user][4] }}"
     
 - debug:
-    var: "{{ current_user_home }}"
+    var: current_user_home
 
 - name: create symbolic links to downloads and torrents directories
   ansible.builtin.file:
