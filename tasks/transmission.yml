@@ -103,7 +103,7 @@
     key: "{{ tg_torrent_bot.regular_user }}"
     
 - debug:
-    var: ansible_facts.getent_passwd.values()|first|[4]
+    var: ansible_facts.getent_passwd.values()|list|first[4]
 
 - debug:
     var: ansible_facts.getent_passwd["{{ tg_torrent_bot.regular_user }}"][4]
