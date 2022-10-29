@@ -10,7 +10,7 @@
 
 - name: debug
   ansible.builtin.debug:
-    msg: "{{ ansible_facts.getent_passwd.keys() }}"
+    msg: "{{ ansible_facts.getent_passwd.keys()[0] }}"
 
 - name: backup existing settings.json if any
   become_user: "{{ getent_passwd[settings_json.stat.uid].0 }}"
