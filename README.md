@@ -13,7 +13,21 @@ Any pre-requisites that may not be covered by Ansible itself or the role should 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+All variables which can be overridden are stored in [defaults/main.yml](defaults/main.yml) file as well as in table below.
+
+| Name           | Default Value | Description                        |
+| -------------- | ------------- | -----------------------------------|
+| `telegram_token` | | Telegram bot token, get it from [@BotFather](https://t.me/BotFather) |
+| `rutracker_host` | https://rutracker.org | You can set your own rutracker mirror here. |
+| `rutracker_username` | | Username for access to rutracker.org |
+| `rutracker_password` | | Password for access to rutracker.org |
+| `allowed_users` | "" | Comma-separated list of users, with whom the bot will work. If empty, the bot will respond to any user. |
+| `proxy_telegram` | false | Should the bot use proxy to access Telegram servers |
+| `proxy_rutracker` | false | Should the bot use proxy to access rutracker.org |
+| `proxy_host` | 127.0.0.1 | Proxy host |
+| `proxy_port` | 8080 | Proxy port |
+| `proxy_username` | "" | Proxy username |
+| `proxy_password` | "" | Proxy password |
 
 Example Playbook
 ----------------
