@@ -1,7 +1,9 @@
-Role Name
+Ansible Role: tg_torrent_bot_transmission
 =========
 
-A brief description of the role goes here.
+Integrates [Telegram Torrent Bot](https://www.npmjs.com/package/tg-torrent-bot) with [Transmission bittorrent client](https://transmissionbt.com/).
+
+Thus, you'll be able to search for torrents and download them to your server using Telegram on your cell phone.
 
 Requirements
 ------------
@@ -27,12 +29,6 @@ Including an example of how to use your role (for instance, with variables passe
       roles:
          - { role: username.rolename, x: 42 }
 
-License
--------
+## License
 
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+This project is licensed under GNU General Public License v3.0. See [LICENSE](/LICENSE) for more details.
