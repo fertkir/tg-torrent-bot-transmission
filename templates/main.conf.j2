@@ -4,17 +4,17 @@ TELEGRAM_TOKEN="{{ tg_torrent_bot.telegram_token }}"
 RUTRACKER_USERNAME="{{ tg_torrent_bot.rutracker.username }}"
 RUTRACKER_PASSWORD="{{ tg_torrent_bot.rutracker.password }}"
 TORRENTS_DIR="{{ transmission_torrents_dir }}"
-ALLOWED_USERS="{{ tg_torrent_bot.allowed_users | default('') }}"
-RUTRACKER_HOST="{{ tg_torrent_bot.rutracker.host | default('https://rutracker.org') }}"
+ALLOWED_USERS="{{ tg_torrent_bot.allowed_users }}"
+RUTRACKER_HOST="{{ tg_torrent_bot.rutracker.host }}"
 
 # Should the bot use proxy to access Telegram servers?
-PROXY_TELEGRAM="{{ tg_torrent_bot.proxy.telegram | default('false') }}"
+PROXY_TELEGRAM="{{ tg_torrent_bot.proxy.telegram }}"
 
 # Should the bot use proxy to access rutracker.org?
-PROXY_RUTRACKER="{{ tg_torrent_bot.proxy.rutracker | default('false') }}"
+PROXY_RUTRACKER="{{ tg_torrent_bot.proxy.rutracker }}"
 
 # Proxy settings
-PROXY_HOST="{{ tg_torrent_bot.proxy.host | default('127.0.0.1') }}"
-PROXY_PORT="{{ tg_torrent_bot.proxy.port | default('8080') }}"
-PROXY_USERNAME="{{ tg_torrent_bot.proxy.username | default('') }}"
-PROXY_PASSWORD="{{ tg_torrent_bot.proxy.password | default('') }}"
+PROXY_HOST="{{ tg_torrent_bot.proxy.host }}"
+PROXY_PORT="{{ tg_torrent_bot.proxy.port }}"
+PROXY_USERNAME="{{ tg_torrent_bot.proxy.username }}"
+PROXY_PASSWORD="{{ tg_torrent_bot.proxy.password }}"

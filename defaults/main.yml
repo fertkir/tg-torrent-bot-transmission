@@ -1,2 +1,25 @@
 ---
-# defaults file for tg-torrent-bot-ansible-role
+tg-torrent-bot:
+
+  # telegram_token: ""
+
+  rutracker:
+    # username: ""
+    # password: ""
+    host: https://rutracker.org
+
+  # Comma-separated values of Telegram user IDs who are allowed to use the bot
+  allowed_users: ""
+
+  proxy:
+    # Should the bot use proxy to access Telegram servers?
+    telegram: false
+
+    # Should the bot use proxy to access rutracker.org?
+    rutracker: false
+
+    # Proxy settings
+    host: 127.0.0.1
+    port: 8080
+    username: ""
+    password: ""
