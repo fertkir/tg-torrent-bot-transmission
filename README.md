@@ -25,11 +25,9 @@ Fill in your telegram bot token (get it from [@BotFather](https://t.me/BotFather
   roles:
     - role: fertkir.tg_torrent_bot_transmission
       vars:
-        tg_torrent_bot:
-          telegram_token: <your_telegram_token_here>
-          rutracker:
-            username: <rutracker_username>
-            password: <rutracker_password>
+        telegram_token: <your_telegram_token_here>
+        rutracker_username: <rutracker_username>
+        rutracker_password: <rutracker_password>
 ```
 
 ## License
