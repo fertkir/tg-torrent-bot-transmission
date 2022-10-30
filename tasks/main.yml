@@ -19,6 +19,7 @@
       ansible.builtin.systemd:
         name: "{{ item }}"
         state: started
+        enabled: true
       with_items:
         - transmission-daemon
         - tg-torrent-bot
