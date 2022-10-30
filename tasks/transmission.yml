@@ -1,6 +1,7 @@
 ---
 - name: Get settings.json stats
-  local_action: stat path="{{ transmission.settings_json }}"
+  ansible.builtin.stat:
+    path: "{{ transmission.settings_json }}"
   register: settings_json
 
 - name: Backup existing settings.json if any
@@ -21,7 +22,8 @@
         state: stopped
 
 - name: Get settings.json stats again (required when running for the first time)
-  local_action: stat path="{{ transmission.settings_json }}"
+  ansible.builtin.stat:
+    path: "{{ transmission.settings_json }}"
   register: settings_json
 
 - name: Get transmission usename and group
@@ -98,11 +100,11 @@
     - "{{ transmission_downloads_dir }}"
     - "{{ transmission_torrents_dir }}"
 
-- name: Get username
+- name: Get user name
   ansible.builtin.set_fact:
     current_user: "{{ lookup('env', 'USER') }}"
 
-- name: Add regular user and tg-torrent-bot to transmission group to be able to access files created by transmission
+- name: Add current user and tg-torrent-bot to transmission group to be able to access files created by transmission
   ansible.builtin.user:
     name: "{{ item }}"
     groups: "{{ transmission_group }}"
@@ -111,14 +113,9 @@
     - "{{ current_user }}"
     - tg-torrent-bot
 
-- name: Get current user info
-  ansible.builtin.getent:
-    database: passwd
-    key: "{{ current_user }}"
-
-- name: Save current user home to variable
+- name: Get user home
   ansible.builtin.set_fact:
-    current_user_home: "{{ ansible_facts.getent_passwd[current_user][4] }}"
+    current_user_home: "{{ lookup('env', 'HOME') }}"
 
 - name: Save symlinks folder name to variable
   ansible.builtin.set_fact:

@@ -27,6 +27,7 @@
       ansible.builtin.file:
         path: /etc/tg-torrent-bot/
         state: directory
+        mode: 0755
 
     - name: Copy main.conf
       ansible.builtin.template:
@@ -40,3 +41,4 @@
     state: directory
     owner: tg-torrent-bot
     group: tg-torrent-bot
+    mode: 0755
