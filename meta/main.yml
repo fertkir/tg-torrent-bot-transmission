@@ -1,4 +1,6 @@
 galaxy_info:
+  role_name: tg_torrent_bot_transmission
+  namespace: fertkir
   author: Kirill Fertikov
   description: Telegram Torrent Bot integrated with Transmission bittorrent client
   license: GPL-3.0-or-later
@@ -26,11 +28,11 @@ galaxy_info:
   #   - 99.99
 
   galaxy_tags:
-  - telegram
-  - bot
-  - torrent
-  - rutracker
-  - transmission
+    - telegram
+    - bot
+    - torrent
+    - rutracker
+    - transmission
 
 dependencies: []
   # List your role dependencies here, one per line. Be sure to remove the '[]' above,

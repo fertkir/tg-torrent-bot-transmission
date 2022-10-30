@@ -1,5 +1,5 @@
 ---
-- become: yes
+- become: true
   block:
     - name: installing required packages
       ansible.builtin.package:

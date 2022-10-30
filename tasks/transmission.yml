@@ -4,7 +4,8 @@
   register: settings_json
 
 - name: backup existing settings.json if any
-  command: mv {{ transmission.settings_json }} {{ transmission.settings_json }}.bak.{{ ansible_date_time.iso8601_basic_short }}
+  ansible.builtin.command: >
+    mv {{ transmission.settings_json }} {{ transmission.settings_json }}.bak.{{ ansible_date_time.iso8601_basic_short }}
   when: settings_json.stat.exists
 
 - name: generate a new settings.json
@@ -35,7 +36,7 @@
         transmission_user: "{{ ansible_facts.getent_passwd.keys() | list | first }}"
 
     - name: transmission user
-      debug:
+      ansible.builtin.debug:
         var: transmission_user
 
     - name: get transmission group
@@ -48,7 +49,7 @@
         transmission_group: "{{ ansible_facts.getent_group.keys() | list | first }}"
 
     - name: transmission group
-      debug:
+      ansible.builtin.debug:
         var: transmission_group
 
 - name: read settings.json contents
@@ -72,7 +73,14 @@
   ansible.builtin.set_fact:
     json_contents: "{{ json_contents | combine(json_update, recursive=True) }}"
   vars:
-    json_update: "{'script-torrent-done-enabled': true, 'script-torrent-done-filename': '/usr/local/bin/tg-torrent-bot', 'umask': '2', 'watch-dir': '{{ transmission_torrents_dir }}', 'watch-dir-enabled': true}"
+    json_update: >
+      {
+        'script-torrent-done-enabled': true,
+        'script-torrent-done-filename': '/usr/local/bin/tg-torrent-bot',
+        'umask': '2',
+        'watch-dir': '{{ transmission_torrents_dir }}',
+        'watch-dir-enabled': true
+      }
 
 - name: write updated settings.json
   ansible.builtin.copy:
@@ -84,7 +92,6 @@
     path: "{{ item }}"
     owner: "{{ transmission_user }}"
     group: "{{ transmission_group }}"
-    recurse: yes
     state: directory
     mode: 0775
   with_items:
@@ -99,7 +106,7 @@
   ansible.builtin.user:
     name: "{{ item }}"
     groups: "{{ transmission_group }}"
-    append: yes
+    append: true
   with_items:
     - "{{ current_user }}"
     - tg-torrent-bot
@@ -133,4 +140,3 @@
   with_items:
     - "{{ transmission_downloads_dir }}"
     - "{{ transmission_torrents_dir }}"
-
