@@ -1,17 +1,21 @@
 ---
-- become: true
+- name: Integrating tg-torrent-bot and transmission
+  become: true
   block:
-    - name: installing required packages
+    - name: Installing required packages
       ansible.builtin.package:
         name:
           - npm
           - "{{ transmission.package }}"
         state: present
 
-    - ansible.builtin.import_tasks: transmission.yml
-    - ansible.builtin.import_tasks: tg-torrent-bot.yml
+    - name: Set up Transmission
+      ansible.builtin.import_tasks: transmission.yml
 
-    - name: starting services
+    - name: Set up tg-torrent-bot
+      ansible.builtin.import_tasks: tg-torrent-bot.yml
+
+    - name: Starting services
       ansible.builtin.systemd:
         name: "{{ item }}"
         state: started

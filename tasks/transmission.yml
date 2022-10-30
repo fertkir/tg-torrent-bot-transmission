@@ -1,75 +1,75 @@
 ---
-- name: get settings.json stats
+- name: Get settings.json stats
   local_action: stat path="{{ transmission.settings_json }}"
   register: settings_json
 
-- name: backup existing settings.json if any
+- name: Backup existing settings.json if any
   ansible.builtin.command: >
     mv {{ transmission.settings_json }} {{ transmission.settings_json }}.bak.{{ ansible_date_time.iso8601_basic_short }}
   when: settings_json.stat.exists
 
-- name: generate a new settings.json
+- name: Generate a new settings.json
   block:
-    - name: start transmission-daemon
+    - name: Start transmission-daemon
       ansible.builtin.systemd:
         name: transmission-daemon
         state: started
 
-    - name: stop transmission-daemon
+    - name: Stop transmission-daemon
       ansible.builtin.systemd:
         name: transmission-daemon
         state: stopped
 
-- name: get settings.json stats again (required when running for the first time)
+- name: Get settings.json stats again (required when running for the first time)
   local_action: stat path="{{ transmission.settings_json }}"
   register: settings_json
 
-- name: get transmission usename and group
+- name: Get transmission usename and group
   block:
-    - name: get transmission user
+    - name: Get transmission user
       ansible.builtin.getent:
         database: passwd
         key: "{{ settings_json.stat.uid }}"
 
-    - name: save transmission user to variable
+    - name: Save transmission user to variable
       ansible.builtin.set_fact:
         transmission_user: "{{ ansible_facts.getent_passwd.keys() | list | first }}"
 
-    - name: transmission user
+    - name: Transmission user
       ansible.builtin.debug:
         var: transmission_user
 
-    - name: get transmission group
+    - name: Get transmission group
       ansible.builtin.getent:
         database: group
         key: "{{ settings_json.stat.gid }}"
 
-    - name: save transmission group to variable
+    - name: Save transmission group to variable
       ansible.builtin.set_fact:
         transmission_group: "{{ ansible_facts.getent_group.keys() | list | first }}"
 
-    - name: transmission group
+    - name: Transmission group
       ansible.builtin.debug:
         var: transmission_group
 
-- name: read settings.json contents
+- name: Read settings.json contents
   ansible.builtin.slurp:
     src: "{{ transmission.settings_json }}"
   register: slurped
 
-- name: save settings.json contents to a variable
+- name: Save settings.json contents to a variable
   ansible.builtin.set_fact:
-    json_contents: "{{ slurped.content |  b64decode | from_json }}"
+    json_contents: "{{ slurped.content | b64decode | from_json }}"
 
-- name: read downloads directory path
+- name: Read downloads directory path
   ansible.builtin.set_fact:
     transmission_downloads_dir: "{{ json_contents['download-dir'] }}"
 
-- name: generate torrents directory path
+- name: Generate torrents directory path
   ansible.builtin.set_fact:
     transmission_torrents_dir: "{{ transmission_downloads_dir | regex_replace('([^\/]+$)', 'Torrents') }}"
 
-- name: merge json with replacement values
+- name: Merge json with replacement values
   ansible.builtin.set_fact:
     json_contents: "{{ json_contents | combine(json_update, recursive=True) }}"
   vars:
@@ -82,12 +82,12 @@
         'watch-dir-enabled': true
       }
 
-- name: write updated settings.json
+- name: Write updated settings.json
   ansible.builtin.copy:
     content: "{{ json_contents | to_nice_json(indent=2) }}"
     dest: "{{ transmission.settings_json }}"
 
-- name: create downloads and torrents directories if missing
+- name: Create downloads and torrents directories if missing
   ansible.builtin.file:
     path: "{{ item }}"
     owner: "{{ transmission_user }}"
@@ -98,11 +98,11 @@
     - "{{ transmission_downloads_dir }}"
     - "{{ transmission_torrents_dir }}"
 
-- name: get username
+- name: Get username
   ansible.builtin.set_fact:
     current_user: "{{ lookup('env', 'USER') }}"
 
-- name: add regular user and tg-torrent-bot to transmission group to be able to access files created by transmission
+- name: Add regular user and tg-torrent-bot to transmission group to be able to access files created by transmission
   ansible.builtin.user:
     name: "{{ item }}"
     groups: "{{ transmission_group }}"
@@ -111,27 +111,27 @@
     - "{{ current_user }}"
     - tg-torrent-bot
 
-- name: get current user info
+- name: Get current user info
   ansible.builtin.getent:
     database: passwd
     key: "{{ current_user }}"
 
-- name: save current user home to variable
+- name: Save current user home to variable
   ansible.builtin.set_fact:
     current_user_home: "{{ ansible_facts.getent_passwd[current_user][4] }}"
 
-- name: save symlinks folder name to variable
+- name: Save symlinks folder name to variable
   ansible.builtin.set_fact:
     symlinks_folder: "{{ current_user_home }}/transmission/"
 
-- name: create symlinks folder if missing
+- name: Create symlinks folder if missing
   ansible.builtin.file:
     path: "{{ symlinks_folder }}"
     owner: "{{ current_user }}"
     group: "{{ current_user }}"
     state: directory
 
-- name: create symbolic links to downloads and torrents directories
+- name: Create symbolic links to downloads and torrents directories
   become_user: "{{ current_user }}"
   ansible.builtin.file:
     src: "{{ item }}"
