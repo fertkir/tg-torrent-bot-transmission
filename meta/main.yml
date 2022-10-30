@@ -4,7 +4,7 @@ galaxy_info:
   author: Kirill Fertikov
   description: Telegram Torrent Bot integrated with Transmission bittorrent client
   license: GPL-3.0-or-later
-  min_ansible_version: 2.10
+  min_ansible_version: '2.10'
 
   platforms:
     - name: Fedora
