@@ -23,11 +23,19 @@ A list of other roles hosted on Galaxy should go here, plus any details in regar
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Fill in your telegram bot token (get it from [@BotFather](https://t.me/BotFather) telegram bot) and credentials for rutracker.org.
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+- hosts: all
+  roles:
+    - role: fertkir.tg_torrent_bot_transmission
+      vars:
+        tg_torrent_bot:
+          telegram_token: <your_telegram_token_here>
+          rutracker:
+            username: <rutracker_username>
+            password: <rutracker_password>
+```
 
 ## License
 
