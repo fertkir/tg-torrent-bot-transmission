@@ -79,7 +79,7 @@
       {
         'script-torrent-done-enabled': true,
         'script-torrent-done-filename': '/usr/local/bin/tg-torrent-bot',
-        'umask': '2',
+        'umask': 2,
         'watch-dir': '{{ transmission_torrents_dir }}',
         'watch-dir-enabled': true
       }
