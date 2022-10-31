@@ -5,6 +5,7 @@
   register: settings_json
 
 - name: Generate a new settings.json if current missing
+  when: settings_json.stat.exists
   block:
     - name: Start transmission-daemon
       ansible.builtin.systemd:
@@ -15,7 +16,6 @@
       ansible.builtin.systemd:
         name: transmission-daemon
         state: stopped
-  when: settings_json.stat.exists
 
 - name: Read settings.json contents
   ansible.builtin.slurp:

@@ -9,7 +9,7 @@ galaxy_info:
   platforms:
     - name: Fedora
       versions:
-        - 36
+        - '36'
 
   galaxy_tags:
     - telegram
