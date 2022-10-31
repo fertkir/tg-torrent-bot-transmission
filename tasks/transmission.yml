@@ -21,39 +21,6 @@
         name: transmission-daemon
         state: stopped
 
-- name: Get settings.json stats again (required when running for the first time)
-  ansible.builtin.stat:
-    path: "{{ transmission.settings_json }}"
-  register: settings_json
-
-- name: Get transmission usename and group
-  block:
-    - name: Get transmission user
-      ansible.builtin.getent:
-        database: passwd
-        key: "{{ settings_json.stat.uid }}"
-
-    - name: Save transmission user to variable
-      ansible.builtin.set_fact:
-        transmission_user: "{{ ansible_facts.getent_passwd.keys() | list | first }}"
-
-    - name: Transmission user
-      ansible.builtin.debug:
-        var: transmission_user
-
-    - name: Get transmission group
-      ansible.builtin.getent:
-        database: group
-        key: "{{ settings_json.stat.gid }}"
-
-    - name: Save transmission group to variable
-      ansible.builtin.set_fact:
-        transmission_group: "{{ ansible_facts.getent_group.keys() | list | first }}"
-
-    - name: Transmission group
-      ansible.builtin.debug:
-        var: transmission_group
-
 - name: Read settings.json contents
   ansible.builtin.slurp:
     src: "{{ transmission.settings_json }}"
@@ -92,8 +59,8 @@
 - name: Create downloads and torrents directories if missing
   ansible.builtin.file:
     path: "{{ item }}"
-    owner: "{{ transmission_user }}"
-    group: "{{ transmission_group }}"
+    owner: "{{ transmission.user }}"
+    group: "{{ transmission.group }}"
     state: directory
     mode: 0775
   with_items:
@@ -107,7 +74,7 @@
 - name: Add current user and tg-torrent-bot to transmission group to be able to access files created by transmission
   ansible.builtin.user:
     name: "{{ item }}"
-    groups: "{{ transmission_group }}"
+    groups: "{{ transmission.group }}"
     append: true
   with_items:
     - "{{ current_user }}"

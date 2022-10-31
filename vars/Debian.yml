@@ -1,0 +1,4 @@
+---
+transmission:
+  user: debian-transmission
+  group: debian-transmission
