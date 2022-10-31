@@ -4,12 +4,7 @@
     path: "{{ transmission_settings_json }}"
   register: settings_json
 
-- name: Backup existing settings.json if any
-  ansible.builtin.command: >
-    mv {{ transmission_settings_json }} {{ transmission_settings_json }}.bak.{{ ansible_date_time.iso8601_basic_short }}
-  when: settings_json.stat.exists
-
-- name: Generate a new settings.json
+- name: Generate a new settings.json if current missing
   block:
     - name: Start transmission-daemon
       ansible.builtin.systemd:
@@ -20,6 +15,7 @@
       ansible.builtin.systemd:
         name: transmission-daemon
         state: stopped
+  when: settings_json.stat.exists
 
 - name: Read settings.json contents
   ansible.builtin.slurp:
