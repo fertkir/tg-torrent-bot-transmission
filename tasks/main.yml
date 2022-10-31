@@ -10,6 +10,7 @@
       ansible.builtin.package:
         name:
           - npm
+          - curl
           - "{{ transmission_package }}"
         state: present
 
