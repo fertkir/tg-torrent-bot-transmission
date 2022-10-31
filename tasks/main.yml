@@ -1,10 +1,11 @@
 ---
-- include_vars: "Debian.yml"
-  when: ansible_os_family == "Debian"
-
 - name: Integrating tg-torrent-bot and transmission
   become: true
   block:
+    - name: Including OS-specific variables
+      ansible.builtin.include_vars: "Debian.yml"
+      when: ansible_os_family == "Debian"
+
     - name: Installing required packages
       ansible.builtin.package:
         name:
