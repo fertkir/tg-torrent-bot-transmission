@@ -1,4 +1,3 @@
 ---
-transmission:
-  user: debian-transmission
-  group: debian-transmission
+transmission_user: debian-transmission
+transmission_group: debian-transmission

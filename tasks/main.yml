@@ -10,7 +10,7 @@
       ansible.builtin.package:
         name:
           - npm
-          - "{{ transmission.package }}"
+          - "{{ transmission_package }}"
         state: present
 
     - name: Set up Transmission

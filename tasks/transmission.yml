@@ -1,12 +1,12 @@
 ---
 - name: Get settings.json stats
   ansible.builtin.stat:
-    path: "{{ transmission.settings_json }}"
+    path: "{{ transmission_settings_json }}"
   register: settings_json
 
 - name: Backup existing settings.json if any
   ansible.builtin.command: >
-    mv {{ transmission.settings_json }} {{ transmission.settings_json }}.bak.{{ ansible_date_time.iso8601_basic_short }}
+    mv {{ transmission_settings_json }} {{ transmission_settings_json }}.bak.{{ ansible_date_time.iso8601_basic_short }}
   when: settings_json.stat.exists
 
 - name: Generate a new settings.json
@@ -23,7 +23,7 @@
 
 - name: Read settings.json contents
   ansible.builtin.slurp:
-    src: "{{ transmission.settings_json }}"
+    src: "{{ transmission_settings_json }}"
   register: slurped
 
 - name: Save settings.json contents to a variable
@@ -54,13 +54,13 @@
 - name: Write updated settings.json
   ansible.builtin.copy:
     content: "{{ json_contents | to_nice_json(indent=2) }}"
-    dest: "{{ transmission.settings_json }}"
+    dest: "{{ transmission_settings_json }}"
 
 - name: Create downloads and torrents directories if missing
   ansible.builtin.file:
     path: "{{ item }}"
-    owner: "{{ transmission.user }}"
-    group: "{{ transmission.group }}"
+    owner: "{{ transmission_user }}"
+    group: "{{ transmission_group }}"
     state: directory
     mode: 0775
   with_items:
@@ -74,7 +74,7 @@
 - name: Add current user and tg-torrent-bot to transmission group to be able to access files created by transmission
   ansible.builtin.user:
     name: "{{ item }}"
-    groups: "{{ transmission.group }}"
+    groups: "{{ transmission_group }}"
     append: true
   with_items:
     - "{{ current_user }}"
