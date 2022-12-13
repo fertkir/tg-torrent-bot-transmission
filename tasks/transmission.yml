@@ -41,6 +41,10 @@
         'watch-dir-enabled': true
       }
 
+- name: Merge json with user settings
+  ansible.builtin.set_fact:
+    json_contents: "{{ json_contents | combine(transmission_settings, recursive=True) }}"
+
 - name: Write updated settings.json
   ansible.builtin.copy:
     content: "{{ json_contents | to_nice_json(indent=2) }}"
