@@ -28,6 +28,7 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 | `proxy_port` | 8080 | Proxy port |
 | `proxy_username` | "" | Proxy username |
 | `proxy_password` | "" | Proxy password |
+| `transmission_settings` | {} | Json with custom settings that will be applied to Transmission's settings.json |
 
 Example Playbook
 ----------------
@@ -42,6 +43,7 @@ Fill in your telegram bot token (get it from [@BotFather](https://t.me/BotFather
         telegram_token: <your_telegram_token_here>
         rutracker_username: <rutracker_username>
         rutracker_password: <rutracker_password>
+        transmission_settings: { 'rpc-whitelist-enabled': false, 'rpc-authentication-required': false }
 ```
 
 ## License
