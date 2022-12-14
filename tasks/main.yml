@@ -14,6 +14,25 @@
           - "{{ transmission_package }}"
         state: present
 
+    - name: Set target user if sudo
+      ansible.builtin.set_fact:
+        target_user: "{{ ansible_env.SUDO_USER }}"
+      when: ansible_env.SUDO_USER != ""
+
+    - name: Set target user if not sudo
+      ansible.builtin.set_fact:
+        target_user: "{{ ansible_env.USER }}"
+      when: ansible_env.SUDO_USER == ""
+
+    - name: Get user data
+      ansible.builtin.getent:
+        database: passwd
+        key: "{{ target_user }}"
+
+    - name: Set target home
+      ansible.builtin.set_fact:
+        target_home: "{{ getent_passwd[target_user][4] }}"
+
     - name: Set up Transmission
       ansible.builtin.import_tasks: transmission.yml
 
