@@ -15,20 +15,21 @@ Role Variables
 
 All variables which can be overridden are stored in [defaults/main.yml](defaults/main.yml) file as well as in table below.
 
-| Name           | Default Value | Description                        |
-| -------------- | ------------- | -----------------------------------|
-| `telegram_token` | | Telegram bot token, get it from [@BotFather](https://t.me/BotFather) |
-| `rutracker_host` | https://rutracker.org | You can set your own rutracker mirror here. |
-| `rutracker_username` | | Username for access to rutracker.org |
-| `rutracker_password` | | Password for access to rutracker.org |
-| `allowed_users` | "" | Comma-separated list of users, with whom the bot will work. If empty, the bot will respond to any user. |
-| `proxy_telegram` | false | Should the bot use proxy to access Telegram servers |
-| `proxy_rutracker` | false | Should the bot use proxy to access rutracker.org |
-| `proxy_host` | 127.0.0.1 | Proxy host |
-| `proxy_port` | 8080 | Proxy port |
-| `proxy_username` | "" | Proxy username |
-| `proxy_password` | "" | Proxy password |
-| `transmission_settings` | {} | Json with custom settings that will be applied to Transmission's settings.json |
+| Name                    | Default Value         | Description                                                                                             |
+|-------------------------|-----------------------|---------------------------------------------------------------------------------------------------------|
+| `telegram_token`        |                       | Telegram bot token, get it from [@BotFather](https://t.me/BotFather)                                    |
+| `rutracker_host`        | https://rutracker.org | You can set your own rutracker mirror here.                                                             |
+| `rutracker_username`    |                       | Username for access to rutracker.org                                                                    |
+| `rutracker_password`    |                       | Password for access to rutracker.org                                                                    |
+| `allowed_users`         | ""                    | Comma-separated list of users, with whom the bot will work. If empty, the bot will respond to any user. |
+| `proxy_telegram`        | false                 | Should the bot use proxy to access Telegram servers                                                     |
+| `proxy_rutracker`       | false                 | Should the bot use proxy to access rutracker.org                                                        |
+| `proxy_protocol`        | http                  | Possible values: http, https, socks5                                                                    |
+| `proxy_host`            | 127.0.0.1             | Proxy host                                                                                              |
+| `proxy_port`            | 8080                  | Proxy port                                                                                              |
+| `proxy_username`        | ""                    | Proxy username                                                                                          |
+| `proxy_password`        | ""                    | Proxy password                                                                                          |
+| `transmission_settings` | {}                    | Json with custom settings that will be applied to Transmission's settings.json                          |
 
 Example Playbook
 ----------------
