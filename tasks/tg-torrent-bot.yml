@@ -18,7 +18,7 @@
 - name: Copy tg-torrent-bot.service
   ansible.builtin.copy:
     src: tg-torrent-bot.service
-    dest: /lib/systemd/system/
+    dest: /etc/systemd/system/
     mode: 0644
 
 - name: Create tg-torrent-bot configuration
