@@ -8,6 +8,7 @@
   ansible.builtin.user:
     name: tg-torrent-bot
     system: true
+    create_home: false
 
 - name: Copy tg-torrent-bot script
   ansible.builtin.copy:
