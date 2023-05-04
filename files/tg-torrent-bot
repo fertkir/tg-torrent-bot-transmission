@@ -1,29 +1,18 @@
 #!/bin/bash -e
 
-export CURRENT_DOWNLOADS="/var/lib/tg-torrent-bot/current-downloads"
+WORKDIR="/var/lib/tg-torrent-bot"
+export COMPLETES_WATCHDIR="$WORKDIR/completes-watchdir"
+export DB_FILE="$WORKDIR/db.json"
 
 # exporting all variables from config
 set -a
 . /etc/tg-torrent-bot/main.conf
 set +a
 
-
 if [ -z ${TR_TORRENT_HASH+x} ]; then
-
-	mkdir -p $CURRENT_DOWNLOADS
+	mkdir -p $COMPLETES_WATCHDIR
 	/usr/local/bin/tg-torrent-bot-node
-
 else
-
 	TR_TORRENT_HASH_LOWERCASE=$(echo "$TR_TORRENT_HASH" | tr '[:upper:]' '[:lower:]')
-	FILE_WITH_CHAT_ID="$CURRENT_DOWNLOADS/$TR_TORRENT_HASH_LOWERCASE"
-
-	CHAT_ID=$(cat "$FILE_WITH_CHAT_ID")
-	rm "$FILE_WITH_CHAT_ID" || true # if user didn't set permissions correctly, we still want to send notification
-
-	curl -X POST \
-        -H 'Content-Type: application/json' \
-        -d "{\"chat_id\": \"$CHAT_ID\", \"text\": \"Завершена загрузка $TR_TORRENT_NAME\"}" \
-        $(if [ "$PROXY_TELEGRAM" = "true" ]; then echo "--proxy $PROXY_PROTOCOL://$PROXY_USERNAME:$PROXY_PASSWORD@$PROXY_HOST:$PROXY_PORT"; fi) \
-        "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage"
+	echo -n "$TR_TORRENT_NAME" > "$COMPLETES_WATCHDIR/$TR_TORRENT_HASH_LOWERCASE"
 fi
