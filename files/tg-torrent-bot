@@ -2,15 +2,12 @@
 
 WORKDIR="/var/lib/tg-torrent-bot"
 export COMPLETES_WATCHDIR="$WORKDIR/completes-watchdir"
-export DB_FILE="$WORKDIR/db.json"
-
-# exporting all variables from config
-set -a
-. /etc/tg-torrent-bot/main.conf
-set +a
 
 if [ -z ${TR_TORRENT_HASH+x} ]; then
-	mkdir -p $COMPLETES_WATCHDIR
+  export DB_FILE="$WORKDIR/db.json"
+  set -a
+    . /etc/tg-torrent-bot/main.conf # exporting all variables from config
+  set +a
 	/usr/local/bin/tg-torrent-bot-node
 else
 	TR_TORRENT_HASH_LOWERCASE=$(echo "$TR_TORRENT_HASH" | tr '[:upper:]' '[:lower:]')

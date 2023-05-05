@@ -43,3 +43,11 @@
     owner: tg-torrent-bot
     group: tg-torrent-bot
     mode: 0755
+
+- name: Creating /var/lib/tg-torrent-bot/completes-watchdir/
+  ansible.builtin.file:
+    path: /var/lib/tg-torrent-bot/completes-watchdir/
+    state: directory
+    owner: "{{ transmission_user }}"
+    group: "{{ transmission_group }}"
+    mode: 0755
