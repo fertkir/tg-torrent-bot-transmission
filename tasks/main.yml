@@ -6,14 +6,6 @@
       ansible.builtin.include_vars: "Debian.yml"
       when: ansible_os_family == "Debian"
 
-    - name: Installing required packages
-      ansible.builtin.package:
-        name:
-          - npm
-          - curl
-          - "{{ transmission_package }}"
-        state: present
-
     - name: Set target user if sudo
       ansible.builtin.set_fact:
         target_user: "{{ ansible_env.SUDO_USER }}"
@@ -32,6 +24,9 @@
     - name: Set target home
       ansible.builtin.set_fact:
         target_home: "{{ getent_passwd[target_user][4] }}"
+
+    - name: Install Node.js
+      ansible.builtin.import_tasks: node.yml
 
     - name: Set up Transmission
       ansible.builtin.import_tasks: transmission.yml

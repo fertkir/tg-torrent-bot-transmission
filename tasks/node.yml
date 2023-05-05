@@ -1,0 +1,6 @@
+---
+# fixme: need to install snapd if not installed
+- name: Install Node.js snap
+  community.general.snap:
+    name: node
+    classic: true

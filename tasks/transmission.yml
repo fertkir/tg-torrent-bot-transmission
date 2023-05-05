@@ -1,4 +1,10 @@
 ---
+- name: Installing transmission
+  ansible.builtin.package:
+    name:
+      - "{{ transmission_package }}"
+    state: present
+
 - name: Start/stop transmission-daemon to generate settings.json if it's missing
   block:
     - name: Start transmission-daemon
