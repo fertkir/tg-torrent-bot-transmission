@@ -1,5 +1,6 @@
 Ansible Role: tg_torrent_bot_transmission
 =========
+**DEPRECATION WARNING**: This role is no longer supported. Please use [this collection instead](https://galaxy.ansible.com/fertkir/tg_torrent_bot).
 
 Integrates [Telegram Torrent Bot](https://www.npmjs.com/package/tg-torrent-bot) with [Transmission bittorrent client](https://transmissionbt.com/).
 
